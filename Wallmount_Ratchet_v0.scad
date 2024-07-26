@@ -13,17 +13,10 @@
 DesignStatus="sizing"; // ["sizing","fitting","printing"]
 // Variables seen by customizer
 
-
-TestSlab_X=50;
-TestSlab_Y=100;
-TestSlab_Z=30;
-
-/* [Tab Name_2] */
-TestCylinder_H=35;
-TestCylinder_D1=25;
-TestCylinder_D2=45;
-
-TestSphere_D=42;
+BasePlateDIMENSION_X=85;
+BasePlateDIMENSION_Y=100;
+BasePlateRADIUS=5;
+BasePlateDIMENSION_Z=5;
 
 module __Customizer_Limit__ () {}  // before these, the variables are usable in the cutomizer
 shown_by_customizer = false;
@@ -78,10 +71,11 @@ $fn = $preview ? LOW_RESOLUTION : HIGH_RESOLUTION ; // Facets in preview (F5) se
     see_me_in_colourful(){
         translate([0,0,0]){
             difference(){
-                TEST_OBJECT();
+                Base_Plate_Wall_Mount();
+//                TEST_OBJECT();
                 translate([25,40,15]){                    
                     scale([0.4,0.4,0.4]){        
-                        TEST_CUTCUBE();
+//                        TEST_CUTCUBE();
             }
         }
     }
@@ -91,7 +85,7 @@ $fn = $preview ? LOW_RESOLUTION : HIGH_RESOLUTION ; // Facets in preview (F5) se
         }        
         translate([0,0,0]){
             difference(){
-                TEST_SPHERE();
+//                TEST_SPHERE();
                 
             }
         }
@@ -99,7 +93,7 @@ $fn = $preview ? LOW_RESOLUTION : HIGH_RESOLUTION ; // Facets in preview (F5) se
         }
         translate([0,0,0]){
             if(CUT_MODULES_RENDERED=="true"){
-                TEST_CUTCYLINDER();
+//                TEST_CUTCYLINDER();
             }
             else{
                 echo("CUT_MODULES_RENDERED= ",CUT_MODULES_RENDERED);
@@ -159,8 +153,17 @@ module see_me_in_colourful(){ // iterates the given modules and colors them auto
 // ===============================================================================
 // =--------------------------------- Modules -----------------------------------=
 // ===============================================================================
-//TEST_OBJECT();
 
+//BasePlateDIMENSION_X=85;
+//BasePlateDIMENSION_Y=100;
+//BasePlateRADIUS=5;
+//BasePlateDIMENSION_Z=5;
+
+module Hanger_Fork(){
+   
+}
+
+//TEST_OBJECT();
 module TEST_OBJECT(){
     difference(){
         TEST_CUTCUBE(TestSlab_X,TestSlab_Y,TestSlab_Z);
@@ -270,7 +273,12 @@ module Intersection_Test_Cut(PLAIN,THICKNESS,OFFSET){
 // ===============================================================================
 // ---------------------------------- Linear Extrude Modules ---------------------
 // ===============================================================================
-
+//BasePlateWallMount();
+module Base_Plate_Wall_Mount(){
+    linear_extrude(height=BasePlateDIMENSION_Z){
+        2D_Rounded_Square_Base_Shape(BasePlateDIMENSION_X,BasePlateDIMENSION_Y,BasePlateRADIUS,CENTER=false);
+    }
+}
 //Ring_Shaper(3,15,1.5);
 module Ring_Shaper(HEIGHT,OUTER,WALLTHICKNESS){
     linear_extrude(HEIGHT){
@@ -311,7 +319,46 @@ module DONUT(DIAMETER,DIAMETER_RING,SCAL_X,SCAL_Y){
 // ===============================================================================
 // =--------------------------------- 2D-Shapes ---------------------------------=
 // ===============================================================================
+Hanger_Fork_Z=35;
 
+//!Base_Plate_Hanger_Fork();
+//BasePlateDIMENSION_X=85;
+//BasePlateDIMENSION_Y=100;
+//BasePlateRADIUS=5;
+//BasePlateDIMENSION_Z=5;
+HangerRounderR=2;
+LINeXtrude=1;
+hull(){
+    linear_extrude(height=BasePlateDIMENSION_Z){
+        translate([0,BasePlateDIMENSION_Y-BasePlateDIMENSION_Y/3,Hanger_Fork_Z]){
+        2D_Rounded_Square_Base_Shape(BasePlateDIMENSION_X/5,BasePlateDIMENSION_Y/3,HangerRounderR,CENTER=false);
+//        Base_Plate_Hanger_Fork();
+        }
+    }
+    translate([0,BasePlateDIMENSION_Y-BasePlateDIMENSION_Y/5,Hanger_Fork_Z]){
+        translate([0,0,-LINeXtrude]){
+            linear_extrude(height=LINeXtrude){
+                2D_Rounded_Square_Base_Shape(BasePlateDIMENSION_X/5,BasePlateDIMENSION_Y/5,HangerRounderR,CENTER=false);
+            }
+        }
+    }
+}
+module Base_Plate_Hanger_Fork(){
+    hull(){
+        translate([0,BasePlateDIMENSION_Y,0]){
+            circle(r=HangerRounderR);
+        }
+        translate([0,BasePlateDIMENSION_Y-BasePlateDIMENSION_Y/3,0]){
+            circle(r=HangerRounderR);
+        }
+        translate([BasePlateDIMENSION_X/5,BasePlateDIMENSION_Y-BasePlateDIMENSION_Y/3,0]){
+            circle(r=HangerRounderR);
+        }
+        translate([BasePlateDIMENSION_X/5,BasePlateDIMENSION_Y,0]){
+            circle(r=HangerRounderR);
+        }
+    }  
+}
 //2D_Ring_Shape(20,1);
 module 2D_Ring_Shape(OUTER_D,WALLTHICKNESS){
     difference(){
